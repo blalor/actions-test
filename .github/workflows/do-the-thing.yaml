@@ -69,6 +69,6 @@ jobs:
                     echo ".github.event.head_commit.message: "
                     echo ">>>"
                     cat <<-'__msg'
-                    ${{ .github.event.head_commit.message }}
+                    ${{ github.event.head_commit.message }}
                     __msg
                     echo "<<<"
