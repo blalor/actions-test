@@ -1,0 +1,45 @@
+---
+name: do the thing
+
+on:
+    push:
+        branches:
+            - main
+
+    pull_request:
+
+
+jobs:
+    "j-o-b":
+        name: job
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: dump github context
+                shell: bash
+                run: |-
+                    set -e
+
+                    cat <<-'_gh' >| context-github.json
+                    ${{ toJSON(github) }}
+                    _gh
+
+                    context-github.json
+
+
+            -   name: dump input context
+                shell: bash
+                run: |-
+                    set -e
+
+                    cat <<-'_gh' >| context-input.json
+                    ${{ toJSON(input) }}
+                    _gh
+
+                    context-input.json
+
+            -   name: upload artifacts
+                uses: actions/upload-artifact@v4
+                with:
+                    name: contexts
+                    path: context-*.json
