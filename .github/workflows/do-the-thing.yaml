@@ -1,5 +1,6 @@
 ---
 name: do the thing
+run-name: "thinging on ${{ github.event_name }}, #${{ event.run_number }}"
 
 on:
     push:
@@ -53,3 +54,21 @@ jobs:
                 with:
                     name: contexts
                     path: context-*.json
+
+
+            -   name: messages
+                shell: bash
+                run: |-
+                    set -e
+
+                    COMMIT_MESSAGE=$(git log -1 $COMMIT_HASH --format=%B | sed 's/"/\\"/g')
+
+                    echo "COMMIT_MESSAGE: "
+                    echo $COMMIT_MESSAGE
+
+                    echo ".github.event.head_commit.message: "
+                    echo ">>>"
+                    cat <<-'__msg'
+                    ${{ .github.event.head_commit.message }}
+                    __msg
+                    echo "<<<"
