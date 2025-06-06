@@ -11,6 +11,7 @@ on:
 
 
 env:
+    # github.sha -- the commit SHA that triggered the workflow
     COMMIT_HASH: "${{ github.event.pull_request.head.sha || github.sha }}"
     BRANCH: "${{ github.head_ref || github.ref_name }}"
     GITHUB_ACTION_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -28,7 +29,9 @@ jobs:
                     set -e
 
                     cat <<-'__ctx' >| context-github.json
-                    ${{ toJSON(github) }}
+                    {"github":
+                        ${{ toJSON(github) }}
+                    }
                     __ctx
 
             -   name: dump inputs context
@@ -37,7 +40,9 @@ jobs:
                     set -e
 
                     cat <<-'__ctx' >| context-inputs.json
-                    ${{ toJSON(inputs) }}
+                    {"inputs":
+                        ${{ toJSON(inputs) }}
+                    }
                     __ctx
 
             -   name: dump env context
@@ -46,7 +51,9 @@ jobs:
                     set -e
 
                     cat <<-'__ctx' >| context-env.json
-                    ${{ toJSON(env) }}
+                    {"env":
+                        ${{ toJSON(env) }}
+                    }
                     __ctx
 
             -   name: upload artifacts
@@ -64,12 +71,19 @@ jobs:
                 run: |-
                     set -e
 
+                    echo "github.event.pull_request.head.sha: ${{ github.event.pull_request.head.sha }}"
+                    echo "github.sha: ${{ github.sha }}"
+                    echo "github.head_ref: ${{ github.head_ref }}"
+                    echo "github.ref_name: ${{ github.ref_name }}"
+
                     COMMIT_MESSAGE=$(git log -1 $COMMIT_HASH --format=%B | sed 's/"/\\"/g')
 
                     echo "COMMIT_MESSAGE: "
+                    echo ">>>"
                     echo $COMMIT_MESSAGE
+                    echo "<<<"
 
-                    echo ".github.event.head_commit.message: "
+                    echo "github.event.head_commit.message: "
                     echo ">>>"
                     cat <<-'__msg'
                     ${{ github.event.head_commit.message }}
