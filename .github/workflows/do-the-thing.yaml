@@ -69,7 +69,8 @@ jobs:
             -   name: messages
                 shell: bash
                 run: |-
-                    set -e
+                    set +e
+                    set -x
 
                     echo "github.event.pull_request.head.sha: ${{ github.event.pull_request.head.sha }}"
                     echo "github.sha: ${{ github.sha }}"
