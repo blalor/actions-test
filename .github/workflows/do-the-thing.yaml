@@ -20,23 +20,27 @@ jobs:
                 run: |-
                     set -e
 
-                    cat <<-'_gh' >| context-github.json
+                    cat <<-'__ctx' >| context-github.json
                     ${{ toJSON(github) }}
-                    _gh
+                    __ctx
 
-                    context-github.json
-
-
-            -   name: dump input context
+            -   name: dump inputs context
                 shell: bash
                 run: |-
                     set -e
 
-                    cat <<-'_gh' >| context-input.json
-                    ${{ toJSON(input) }}
-                    _gh
+                    cat <<-'__ctx' >| context-inputs.json
+                    ${{ toJSON(inputs) }}
+                    __ctx
 
-                    context-input.json
+            -   name: dump env context
+                shell: bash
+                run: |-
+                    set -e
+
+                    cat <<-'__ctx' >| context-env.json
+                    ${{ toJSON(env) }}
+                    __ctx
 
             -   name: upload artifacts
                 uses: actions/upload-artifact@v4
