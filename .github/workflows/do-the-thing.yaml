@@ -1,6 +1,6 @@
 ---
 name: do the thing
-run-name: "thinging on ${{ github.event_name }}, #${{ event.run_number }}"
+run-name: "thinging on ${{ github.event_name }}, #${{ github.event.run_number }}"
 
 on:
     push:
