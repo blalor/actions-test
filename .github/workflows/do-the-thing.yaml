@@ -1,6 +1,6 @@
 ---
 name: do the thing
-run-name: "thinging on ${{ github.event_name }}, #${{ github.event.run_number }}"
+run-name: "thinging on ${{ github.event_name }}, #${{ github.run_number }}"
 
 on:
     push:
@@ -55,6 +55,9 @@ jobs:
                     name: contexts
                     path: context-*.json
 
+
+            -   name: checkout
+                uses: actions/checkout@v4
 
             -   name: messages
                 shell: bash
