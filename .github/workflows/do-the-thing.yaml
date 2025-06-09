@@ -16,7 +16,9 @@ env:
     BRANCH: "${{ github.head_ref || github.ref_name }}"
     GITHUB_ACTION_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-    # if not pull_request, assume push
+    # if not pull_request, assume push.
+    # ….head_commit.message may be multi-line, so take only the first line when
+    # actually using it. 🫠
     CTRLPLANE_VERSION_NAME: >-
         ${{
             github.event.pull_request
@@ -87,7 +89,7 @@ jobs:
                 shell: bash
                 run: |-
                     echo "CTRLPLANE_VERSION_NAME:"
-                    echo "${CTRLPLANE_VERSION_NAME}"
+                    echo "${CTRLPLANE_VERSION_NAME%%$'\n'*}"
 
                     git show --format=fuller "${{ github.sha }}" || true
 
