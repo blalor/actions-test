@@ -1,5 +1,6 @@
 ---
 name: do the thing
+run-name: "thinging on ${{ github.event_name }}, #${{ github.run_number }}"
 
 on:
     push:
@@ -10,10 +11,23 @@ on:
 
 
 env:
+    # github.sha -- the commit SHA that triggered the workflow
     COMMIT_HASH: "${{ github.event.pull_request.head.sha || github.sha }}"
     BRANCH: "${{ github.head_ref || github.ref_name }}"
     GITHUB_ACTION_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
+    # if not pull_request, assume push
+    CTRLPLANE_VERSION_NAME: >-
+        ${{
+            github.event.pull_request
+            && format(
+                'PR#{0}/{1} {2}',
+                github.event.pull_request.number,
+                github.run_number,
+                github.event.pull_request.title
+            )
+            || github.event.head_commit.message
+        }}
 
 jobs:
     "j-o-b":
@@ -27,7 +41,9 @@ jobs:
                     set -e
 
                     cat <<-'__ctx' >| context-github.json
-                    ${{ toJSON(github) }}
+                    {"github":
+                        ${{ toJSON(github) }}
+                    }
                     __ctx
 
             -   name: dump inputs context
@@ -36,7 +52,9 @@ jobs:
                     set -e
 
                     cat <<-'__ctx' >| context-inputs.json
-                    ${{ toJSON(inputs) }}
+                    {"inputs":
+                        ${{ toJSON(inputs) }}
+                    }
                     __ctx
 
             -   name: dump env context
@@ -45,7 +63,9 @@ jobs:
                     set -e
 
                     cat <<-'__ctx' >| context-env.json
-                    ${{ toJSON(env) }}
+                    {"env":
+                        ${{ toJSON(env) }}
+                    }
                     __ctx
 
             -   name: upload artifacts
@@ -53,3 +73,32 @@ jobs:
                 with:
                     name: contexts
                     path: context-*.json
+
+
+            -   name: checkout
+                uses: actions/checkout@v4
+
+            # -   name: Setup tmate session
+            #     uses: mxschmitt/action-tmate@v3
+            #     with:
+            #         limit-access-to-actor: true
+
+            -   name: messages
+                shell: bash
+                run: |-
+                    echo "CTRLPLANE_VERSION_NAME:"
+                    echo "${CTRLPLANE_VERSION_NAME}"
+
+                    git show --format=fuller "${{ github.sha }}" || true
+
+                    echo "github.event.pull_request.head.sha: ${{ github.event.pull_request.head.sha }}"
+                    echo "github.sha: ${{ github.sha }}"
+                    echo "github.head_ref: ${{ github.head_ref }}"
+                    echo "github.ref_name: ${{ github.ref_name }}"
+
+                    echo "github.event.head_commit.message: "
+                    echo ">>>"
+                    cat <<-'__msg'
+                    ${{ github.event.head_commit.message }}
+                    __msg
+                    echo "<<<"
