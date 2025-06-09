@@ -16,6 +16,18 @@ env:
     BRANCH: "${{ github.head_ref || github.ref_name }}"
     GITHUB_ACTION_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
+    # if not pull_request, assume push
+    CTRLPLANE_VERSION_NAME: >-
+        ${{
+            github.event.pull_request
+            && format(
+                'PR#{0}/{1} {2}',
+                github.event.pull_request.number,
+                github.run_number,
+                github.event.pull_request.title
+            )
+            || github.event.head_commit.message
+        }}
 
 jobs:
     "j-o-b":
@@ -73,20 +85,6 @@ jobs:
 
             -   name: messages
                 shell: bash
-                env:
-                    # if not pull_request, assume push
-                    CTRLPLANE_VERSION_NAME: >-
-                        ${{
-                            github.event.pull_request
-                            && format(
-                                'PR#{0}/{1} {2}',
-                                github.event.pull_request.number,
-                                github.run_number,
-                                github.event.pull_request.title
-                            )
-                            || github.event.head_commit.message
-                        }}
-
                 run: |-
                     echo "CTRLPLANE_VERSION_NAME:"
                     echo "${CTRLPLANE_VERSION_NAME}"
