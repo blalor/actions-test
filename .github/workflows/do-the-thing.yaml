@@ -66,17 +66,26 @@ jobs:
             -   name: checkout
                 uses: actions/checkout@v4
 
-            -   name: Setup tmate session
-                uses: mxschmitt/action-tmate@v3
-                with:
-                    limit-access-to-actor: true
+            # -   name: Setup tmate session
+            #     uses: mxschmitt/action-tmate@v3
+            #     with:
+            #         limit-access-to-actor: true
 
             -   name: messages
                 shell: bash
+                env:
+                    CTRLPLANE_VERSION_NAME: >-
+                      ${{ github.event.pull_request && format('PR#{0} {1} [{2}]', github.event.pull_request.number, github.event.pull_request.title, github.run_number) || github.ref }}
+
                 run: |-
                     set -x
 
                     /bin/pwd
+
+                    echo "CTRLPLANE_VERSION_NAME:"
+                    echo "${CTRLPLANE_VERSION_NAME}"
+
+                    git show --format=fuller "${{ github.sha }}" || true
 
                     echo "github.event.pull_request.head.sha: ${{ github.event.pull_request.head.sha }}"
                     echo "github.sha: ${{ github.sha }}"
