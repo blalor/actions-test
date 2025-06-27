@@ -49,4 +49,6 @@ jobs:
                     ```json
                     ${{ toJSON(inputs) }}
                     ```
+
+                    my real run id: ${{ github.run_id }}
                     __summary
