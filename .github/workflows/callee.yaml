@@ -1,8 +1,20 @@
 ---
 name: callee
-run-name: Comment on PR [${{ inputs.job_id && inputs.job_id || '' }}]
+run-name: Callee [${{ inputs.job_id && inputs.job_id || '' }}]
 
 on:
+    workflow_dispatch:
+        inputs:
+            job_id:
+                description: "the job ID"
+                required: true
+                type: string
+
+            source_run_id:
+                description: "the run ID that triggered this workflow"
+                required: false
+                type: number
+
     workflow_call:
         inputs:
             job_id:

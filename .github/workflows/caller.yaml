@@ -11,9 +11,14 @@ on:
                 type: string
 
 jobs:
-    comment-on-pr:
-        name: call callee
-        uses: ./.github/workflows/callee.yaml
-        with:
-            job_id: ${{ inputs.job_id }}
-            source_run_id: ${{ github.run_id }}
+    dummy:
+        runs-on: ubuntu-latest
+        steps:
+            -   run: echo ohai
+
+    # comment-on-pr:
+    #     name: call callee
+    #     uses: ./.github/workflows/callee.yaml
+    #     with:
+    #         job_id: ${{ inputs.job_id }}
+    #         source_run_id: ${{ github.run_id }}
