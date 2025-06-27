@@ -36,6 +36,8 @@ jobs:
     find-and-update-comment:
         runs-on: ubuntu-latest
         steps:
+            -   run: echo ohai
+
             -   name: Checkout repository
                 uses: actions/checkout@v4
 
