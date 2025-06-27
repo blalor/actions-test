@@ -1,0 +1,19 @@
+---
+name: callee
+run-name: Comment on PR [${{ inputs.job_id && inputs.job_id || '' }}]
+
+on:
+    workflow_dispatch:
+        inputs:
+            job_id:
+                description: "the job ID"
+                required: true
+                type: string
+
+jobs:
+    comment-on-pr:
+        name: call callee
+        uses: ./.github/workflows/callee.yaml
+        with:
+            job_id: ${{ inputs.job_id }}
+            source_run_id: ${{ github.run_id }}
