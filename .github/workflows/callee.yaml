@@ -13,7 +13,7 @@ on:
             source_run_id:
                 description: "the run ID that triggered this workflow"
                 required: false
-                type: number
+                type: string
 
     workflow_call:
         inputs:
@@ -25,7 +25,7 @@ on:
             source_run_id:
                 description: "the run ID that triggered this workflow"
                 required: false
-                type: number
+                type: string
 
 
 concurrency:
@@ -49,3 +49,4 @@ jobs:
                     ```json
                     ${{ toJSON(inputs) }}
                     ```
+                    __summary
