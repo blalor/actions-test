@@ -95,6 +95,10 @@ jobs:
                     echo "<<<"
 
     comment-on-pr:
+        permissions:
+            contents: read
+            actions: read # allow reading the run info
+
         name: call callee
         uses: ./.github/workflows/callee.yaml
         with:

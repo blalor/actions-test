@@ -2,10 +2,6 @@
 name: callee
 run-name: Callee [${{ inputs.job_id && inputs.job_id || '' }}]
 
-permissions:
-    contents: read
-    actions: read
-
 on:
     workflow_dispatch:
         inputs:
@@ -48,7 +44,12 @@ concurrency:
 
 jobs:
     find-and-update-comment:
+        permissions:
+            contents: read
+            actions: read # allow reading the run info
+
         runs-on: ubuntu-latest
+
         steps:
             -   run: echo ${{ github.workflow }}
 
