@@ -15,6 +15,11 @@ on:
                 required: false
                 type: string
 
+            trigger_ts:
+                description: "when the run was initiated"
+                required: false
+                type: string
+
     workflow_call:
         inputs:
             job_id:
@@ -24,6 +29,11 @@ on:
 
             source_run_id:
                 description: "the run ID that triggered this workflow"
+                required: false
+                type: string
+
+            trigger_ts:
+                description: "when the run was initiated"
                 required: false
                 type: string
 
@@ -50,12 +60,12 @@ jobs:
                     {
                         "github": ${{ toJSON(github) }},
                         "inputs": ${{ toJSON(inputs) }},
-                        "env": ${{ toJSON(env) }},
+                        "env": ${{ toJSON(env) }}
                     }
                     __ctx
 
             -   name: upload artifacts
                 uses: actions/upload-artifact@v4
                 with:
-                    name: contexts
+                    name: contexts-${{ github.job }}
                     path: context-*.json

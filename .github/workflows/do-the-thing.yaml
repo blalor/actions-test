@@ -56,14 +56,14 @@ jobs:
                     {
                         "github": ${{ toJSON(github) }},
                         "inputs": ${{ toJSON(inputs) }},
-                        "env": ${{ toJSON(env) }},
+                        "env": ${{ toJSON(env) }}
                     }
                     __ctx
 
             -   name: upload artifacts
                 uses: actions/upload-artifact@v4
                 with:
-                    name: contexts
+                    name: contexts-${{ github.job }}
                     path: context-*.json
 
             -   name: checkout
@@ -100,3 +100,4 @@ jobs:
         with:
             job_id: ${{ inputs.job_id }}
             source_run_id: ${{ github.run_id }}
+            trigger_ts: ${{ github.event.repository.pushed_at }}
