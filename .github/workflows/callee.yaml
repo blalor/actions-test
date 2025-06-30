@@ -50,7 +50,6 @@ jobs:
                     {
                         "github": ${{ toJSON(github) }},
                         "inputs": ${{ toJSON(inputs) }},
-                        "event": ${{ toJSON(event) }},
                         "env": ${{ toJSON(env) }},
                     }
                     __ctx
