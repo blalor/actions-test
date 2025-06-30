@@ -37,36 +37,27 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            -   name: dump github context
+            -   name: Startup Time
+                shell: python
+                run: |-
+                    import os
+                    from datetime import datetime, UTC
+
+                    ts = datetime.now(tz=UTC)
+                    with open(os.environ["GITHUB_OUTPUT"], "w+") as ofp:
+                        print(f"startup_time={ts.isoformat()}", file=ofp)
+
+            -   name: dump contexts
                 shell: bash
                 run: |-
                     set -e
 
                     cat <<-'__ctx' >| context-github.json
-                    {"github":
-                        ${{ toJSON(github) }}
-                    }
-                    __ctx
-
-            -   name: dump inputs context
-                shell: bash
-                run: |-
-                    set -e
-
-                    cat <<-'__ctx' >| context-inputs.json
-                    {"inputs":
-                        ${{ toJSON(inputs) }}
-                    }
-                    __ctx
-
-            -   name: dump env context
-                shell: bash
-                run: |-
-                    set -e
-
-                    cat <<-'__ctx' >| context-env.json
-                    {"env":
-                        ${{ toJSON(env) }}
+                    {
+                        "github": ${{ toJSON(github) }},
+                        "inputs": ${{ toJSON(inputs) }},
+                        "event": ${{ toJSON(event) }},
+                        "env": ${{ toJSON(env) }},
                     }
                     __ctx
 
@@ -75,7 +66,6 @@ jobs:
                 with:
                     name: contexts
                     path: context-*.json
-
 
             -   name: checkout
                 uses: actions/checkout@v4
@@ -104,3 +94,10 @@ jobs:
                     ${{ github.event.head_commit.message }}
                     __msg
                     echo "<<<"
+
+    comment-on-pr:
+        name: call callee
+        uses: ./.github/workflows/callee.yaml
+        with:
+            job_id: ${{ inputs.job_id }}
+            source_run_id: ${{ github.run_id }}

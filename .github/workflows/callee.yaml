@@ -36,24 +36,27 @@ jobs:
     find-and-update-comment:
         runs-on: ubuntu-latest
         steps:
-            -   run: echo ohai
+            -   run: echo ${{ github.workflow }}
 
             -   name: Checkout repository
                 uses: actions/checkout@v4
 
-            -   run: |
-                    cat >> "${GITHUB_STEP_SUMMARY}" <<- '__summary'
+            -   name: dump contexts
+                shell: bash
+                run: |-
+                    set -e
 
-                    ## inputs
+                    cat <<-'__ctx' >| context-github.json
+                    {
+                        "github": ${{ toJSON(github) }},
+                        "inputs": ${{ toJSON(inputs) }},
+                        "event": ${{ toJSON(event) }},
+                        "env": ${{ toJSON(env) }},
+                    }
+                    __ctx
 
-                    ```json
-                    ${{ toJSON(inputs) }}
-                    ```
-
-                    my real run id: ${{ github.run_id }}
-                    __summary
-
-            -   uses: namespacelabs/breakpoint-action@v0
-                # if: always()
+            -   name: upload artifacts
+                uses: actions/upload-artifact@v4
                 with:
-                    authorized-users: blalor
+                    name: contexts
+                    path: context-*.json
