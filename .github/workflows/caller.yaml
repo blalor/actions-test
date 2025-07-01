@@ -25,7 +25,7 @@ jobs:
                     {
                         "github": ${{ toJSON(github) }},
                         "inputs": ${{ toJSON(inputs) }},
-                        "env": ${{ toJSON(env) }},
+                        "env": ${{ toJSON(env) }}
                     }
                     __ctx
 
@@ -51,6 +51,6 @@ jobs:
                     gh workflow run \
                         callee.yaml \
                         --repo ${{ github.repository }} \
-                        --ref ${{ github.head_ref }} \
+                        --ref ${{ github.ref_name }} \
                         --raw-field job_id=${{ inputs.job_id }} \
                         --raw-field source_run_id=${{ github.run_id }}
