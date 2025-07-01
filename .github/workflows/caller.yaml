@@ -48,7 +48,7 @@ jobs:
                 run: |
                     gh workflow run \
                         callee.yaml \
-                        --repo ${{ githu.repository }} \
+                        --repo ${{ github.repository }} \
                         --ref ${{ github.head_ref }} \
                         --raw-field job_id=${{ inputs.job_id }} \
                         --raw-field source_run_id=${{ github.run_id }}
