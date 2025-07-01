@@ -104,4 +104,3 @@ jobs:
         with:
             job_id: ${{ inputs.job_id }}
             source_run_id: ${{ github.run_id }}
-            trigger_ts: ${{ github.event.repository.pushed_at }}

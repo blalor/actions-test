@@ -15,11 +15,6 @@ on:
                 required: false
                 type: string
 
-            trigger_ts:
-                description: "when the run was initiated"
-                required: false
-                type: string
-
     workflow_call:
         inputs:
             job_id:
@@ -29,11 +24,6 @@ on:
 
             source_run_id:
                 description: "the run ID that triggered this workflow"
-                required: false
-                type: string
-
-            trigger_ts:
-                description: "when the run was initiated"
                 required: false
                 type: string
 
