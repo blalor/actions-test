@@ -1,0 +1,35 @@
+---
+name: delete branch
+run-name: invoke callee [${{ inputs.job_id && inputs.job_id || '' }}]
+
+on:
+    workflow_dispatch:
+        inputs:
+            branch:
+                description: "the branch"
+                required: true
+                type: string
+
+# permissions:
+#     contents: write
+
+jobs:
+    dummy:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: dump contexts
+                shell: bash
+                run: |-
+                    set -e
+
+                    cat <<-'__ctx' >| /tmp/context.json
+                    {
+                        "github": ${{ toJSON(github) }},
+                        "inputs": ${{ toJSON(inputs) }}
+                    }
+                    __ctx
+
+            -   uses: namespacelabs/breakpoint-action@v0
+                # if: always()
+                with:
+                    authorized-users: blalor
