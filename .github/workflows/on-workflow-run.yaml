@@ -1,5 +1,6 @@
 ---
 name: On Workflow Run
+run-name: WF ${{ github.event.workflow.path }} run ${{ github.event.workflow_run.id }} ${{ github.event.action }}
 
 on:
     workflow_run:
