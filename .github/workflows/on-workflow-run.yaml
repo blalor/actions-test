@@ -26,8 +26,7 @@ jobs:
                     cat <<-'__ctx' >| context.json
                     {
                         "github_event": ${{ toJSON(github.event) }},
-                        "github": ${{ toJSON(github) }},
-                        "event": ${{ toJSON(event) }}
+                        "github": ${{ toJSON(github) }}
                     }
                     __ctx
 
