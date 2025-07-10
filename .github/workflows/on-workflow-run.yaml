@@ -1,13 +1,19 @@
 ---
 name: On Workflow Run
-run-name: WF ${{ github.event.workflow.path }} run ${{ github.event.workflow_run.id }} ${{ github.event.action }}
+run-name: WF ${{ github.event.workflow.path }} run ${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }} ${{ github.event.action }}
 
 on:
     workflow_run:
         workflows: ["*"]
         types:
             - completed
-            - requested
+
+env:
+    WORK_DIR: "${{ github.workspace }}/work"
+    RUN_DIR: "${{ github.workspace }}/work/${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}"
+
+    RUN_ID: "${{ github.event.workflow_run.id }}"
+    ATTEMPT_NUM: "${{ github.event.workflow_run.run_attempt }}"
 
 jobs:
     diag:
@@ -19,6 +25,9 @@ jobs:
             actions: read
 
         steps:
+            -   name: make work dir
+                run: mkdir -p "${RUN_DIR}"
+
             -   name: dump contexts
                 shell: bash
                 run: |-
@@ -26,13 +35,38 @@ jobs:
 
                     cat <<-'__ctx' >| context.json
                     {
-                        "github_event": ${{ toJSON(github.event) }},
                         "github": ${{ toJSON(github) }}
                     }
                     __ctx
 
-            -   name: upload artifacts
+            -   name: upload context
                 uses: actions/upload-artifact@v4
                 with:
                     name: contexts-${{ github.job }}
                     path: context.json
+
+            # github.event.workflow_run is the same thing as
+            # `gh api repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}`
+            -   name: capture run details
+                run: cp ${{ github.event_path }} ${{ env.RUN_DIR }}/run.json
+
+            # get logs and step details
+            -   name: get logs and steps detail
+                run: |-
+                    echo "==> getting jobs"
+                    gh api repos/${{ github.repository }}/actions/runs/${{ env.RUN_ID }}/attempts/${{ env.ATTEMPT_NUM }}/jobs \
+                    --paginate \
+                    --verbose \
+                    > "${{ env.RUN_DIR }}/jobs.json"
+
+                    echo "==> getting logs"
+                    gh api repos/${{ github.repository }}/actions/runs/${{ env.RUN_ID }}/attempts/${{ env.ATTEMPT_NUM }}/logs \
+                    --verbose \
+                    > "${{ env.RUN_DIR }}/logs.zip"
+
+            -   name: upload artifacts
+                uses: actions/upload-artifact@v4
+                with:
+                    name: run-artifacts
+                    path: "${{ env.RUN_DIR }}"
+                    if-no-files-found: error
