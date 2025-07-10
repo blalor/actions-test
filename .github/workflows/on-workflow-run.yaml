@@ -58,12 +58,10 @@ jobs:
                     echo "==> getting jobs"
                     gh api repos/${{ github.repository }}/actions/runs/${{ env.RUN_ID }}/attempts/${{ env.ATTEMPT_NUM }}/jobs \
                     --paginate \
-                    --verbose \
                     > "${{ env.RUN_DIR }}/jobs.json"
 
                     echo "==> getting logs"
                     gh api repos/${{ github.repository }}/actions/runs/${{ env.RUN_ID }}/attempts/${{ env.ATTEMPT_NUM }}/logs \
-                    --verbose \
                     > "${{ env.RUN_DIR }}/logs.zip"
 
             -   name: upload artifacts
