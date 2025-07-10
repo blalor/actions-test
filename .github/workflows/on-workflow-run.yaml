@@ -21,10 +21,10 @@ jobs:
     diag:
         runs-on: ubuntu-latest
 
-        # permissions:
+        permissions:
         #     id-token: write
         #     contents: read
-        #     actions: read
+            actions: read
 
         steps:
             -   name: make work dir
