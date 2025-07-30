@@ -41,6 +41,7 @@ jobs:
                     VALUES: |-
                         foo: bar
                         qwerty: uiop
+                        asdf jkl: ";date"
 
                 run: |-
                     yq '
@@ -50,6 +51,8 @@ jobs:
                     ' >> "${GITHUB_ENV}" <<< "${VALUES}"
 
                     cat "${GITHUB_ENV}"
+
+            -   run: env
 
     "j-o-b":
         name: job
