@@ -61,3 +61,4 @@ jobs:
             contents: read
 
         uses: blalor/actions-test-reusable/.github/workflows/callee.yaml@main
+        secrets: inherit
