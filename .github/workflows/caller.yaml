@@ -35,22 +35,25 @@ jobs:
                     name: contexts-${{ github.job }}
                     path: context-*.json
 
-    comment-on-pr:
-        runs-on: ubuntu-latest
+    # comment-on-pr:
+    #     runs-on: ubuntu-latest
 
-        permissions:
-            contents: read
-            actions: write # allow dispatching the other workflow
+    #     permissions:
+    #         contents: read
+    #         actions: write # allow dispatching the other workflow
 
-        steps:
-            -   name: dispatch
-                shell: bash
-                env:
-                    GH_TOKEN: ${{ github.token }}
-                run: |
-                    gh workflow run \
-                        callee.yaml \
-                        --repo ${{ github.repository }} \
-                        --ref ${{ github.ref_name }} \
-                        --raw-field job_id=${{ inputs.job_id }} \
-                        --raw-field source_run_id=${{ github.run_id }}
+    #     steps:
+    #         -   name: dispatch
+    #             shell: bash
+    #             env:
+    #                 GH_TOKEN: ${{ github.token }}
+    #             run: |
+    #                 gh workflow run \
+    #                     callee.yaml \
+    #                     --repo ${{ github.repository }} \
+    #                     --ref ${{ github.ref_name }} \
+    #                     --raw-field job_id=${{ inputs.job_id }} \
+    #                     --raw-field source_run_id=${{ github.run_id }}
+
+    call-callee:
+        uses: blalor/actions-test-reusable/.github/workflows/callee.yaml@main
