@@ -18,22 +18,22 @@ jobs:
 
             -   name: dump contexts
                 shell: bash
-                run: |-
-                    set -e
-
-                    cat <<-'__ctx' >| context-github.json
-                    {
-                        "github": ${{ toJSON(github) }},
-                        "inputs": ${{ toJSON(inputs) }},
-                        "env": ${{ toJSON(env) }}
-                    }
-                    __ctx
+                env:
+                    CONTEXTS: >-
+                        {
+                            "github": ${{ toJSON(github) }},
+                            "inputs": ${{ toJSON(inputs) }},
+                            "job":    ${{ toJSON(job)    }},
+                            "runner": ${{ toJSON(runner) }},
+                            "env":    ${{ toJSON(env)    }}
+                        }
+                run: echo "${CONTEXTS}" >> context.json
 
             -   name: upload artifacts
                 uses: actions/upload-artifact@v4
                 with:
                     name: contexts-${{ github.job }}
-                    path: context-*.json
+                    path: context.json
 
     # comment-on-pr:
     #     runs-on: ubuntu-latest
