@@ -58,5 +58,6 @@ jobs:
     call-callee:
         permissions:
             actions: read
+            contents: read
 
         uses: blalor/actions-test-reusable/.github/workflows/callee.yaml@main
