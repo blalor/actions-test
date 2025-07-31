@@ -56,4 +56,7 @@ jobs:
     #                     --raw-field source_run_id=${{ github.run_id }}
 
     call-callee:
+        permissions:
+            actions: read
+
         uses: blalor/actions-test-reusable/.github/workflows/callee.yaml@main

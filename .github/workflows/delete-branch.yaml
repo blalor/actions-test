@@ -28,7 +28,7 @@ jobs:
                     }
                     __ctx
 
-            -   uses: namespacelabs/breakpoint-action@v0
-                # if: always()
-                with:
-                    authorized-users: blalor
+            # -   uses: namespacelabs/breakpoint-action@v0
+            #     # if: always()
+            #     with:
+            #         authorized-users: blalor
