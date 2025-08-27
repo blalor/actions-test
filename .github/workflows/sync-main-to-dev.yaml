@@ -15,6 +15,7 @@ jobs:
 
         permissions:
             contents: write
+            pull-requests: write
 
         steps:
             -   name: Checkout
@@ -24,9 +25,21 @@ jobs:
                     fetch-depth: 0
 
             -   name: Merge main into dev
+                id: merger
                 run: |-
                     git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
                     git config --global user.name "${{ github.actor }}"
 
-                    git merge --no-ff --no-edit ${{ github.sha }}
-                    git push
+                    if git merge --no-ff --no-edit ${{ github.sha }} ; then
+                        git push
+                    else
+                        echo "merge_failed=true" | tee -a "${GITHUB_OUTPUT}"
+                    fi
+
+            -   name: "PR main → core/v2"
+                if: steps.merger.outputs.merge_failed == 'true'
+                uses: jdtx0/branch-sync@v1.5.1
+                with:
+                    GITHUB_TOKEN: ${{ github.token }}
+                    FROM_BRANCH: "main"
+                    TO_BRANCH: "dev"
