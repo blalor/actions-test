@@ -1,0 +1,26 @@
+# sync branches
+---
+name: Sync branches
+run-name: Sync branches from ${{ github.ref_name }}
+
+"on":
+    push:
+        branches:
+            - main
+
+jobs:
+    sync-main:
+        if: github.ref_name == 'main'
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v5
+                with:
+                    ref: dev
+                    fetch-depth: 0
+
+            -   name: Merge main into dev
+                run: |-
+                    git merge --no-ff --no-edit ${{ github.sha }}
+                    git push
