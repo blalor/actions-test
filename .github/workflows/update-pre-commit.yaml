@@ -1,0 +1,74 @@
+# Regularly auto-update pre-commit config to the latest repos' versions.
+---
+name: Auto-update pre-commit config
+
+"on":
+    schedule:
+        #          ┌────────────── minute (0 - 59)
+        #          │  ┌────────────── hour (0 - 23)
+        #          │  │  ┌────────────── day of the month (1 - 31)
+        #          │  │  │  ┌────────────── month (1 - 12 or JAN-DEC)
+        #          │  │  │  │  ┌───────────── day of the week (0 - 6 or SUN-SAT)
+        #          │  │  │  │  │
+        #          *  *  *  *  *
+        -   cron: "0 13  *  *  1" # Mondays at 1pm UTC
+
+    workflow_dispatch:
+        inputs:
+            dry_run:
+                description: dry run? (draft PR, no auto-merge)
+                type: boolean
+                default: false
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    update-pre-commit:
+        name: pre-commit autoupdate
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: read
+
+            # used for auto-approving PRs
+            pull-requests: write
+
+        steps:
+            -   uses: actions/checkout@v5
+
+            -   name: Setup uv
+                uses: astral-sh/setup-uv@v7
+
+            -   name: install pre-commit
+                run: uv tool install pre-commit --with pre-commit-uv --force-reinstall
+
+            -   name: update pre-commit
+                run: pre-commit autoupdate
+
+            -   name: show changes
+                continue-on-error: true
+                run: git status ; git diff
+
+            -   name: Create Auto-Merge PR
+                uses: ./.github/actions/auto-pr
+                with:
+                    # app-id: ${{ vars.WANDBOT_3000_APP_ID }}
+                    # private-key: ${{ secrets.WANDBOT_3000_PRIVATE_KEY }}
+                    github-token: ${{ secrets.GITHUB_TOKEN }}
+
+                    # "credit" the person (or bot) who triggered the action
+                    author: >-
+                        ${{ env.ACTOR }}
+                        <${{ env.ACTOR_ID }}+${{ env.ACTOR }}@users.noreply.github.com>
+                    title: "chore(dev): update pre-commit repositories"
+                    body: "Update pre-commit repositories"
+                    commit-message: |-
+                        Update pre-commit repositories
+
+                    # reusing the same branch will just update the PR if it's
+                    # open and another run happens.
+                    branch: deps/pre-commit
+                    base: master
+                    draft: "${{ inputs.dry_run && 'true' || 'false' }}"
