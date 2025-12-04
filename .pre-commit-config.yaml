@@ -1,0 +1,50 @@
+---
+# sets the DEFAULT set of hook types to install; you can override the default by
+# passing `--hook-type` to `pre-commit install`, or to `pre-commit uninstall`
+# if you wish to remove specific hook types.
+default_install_hook_types:
+    - pre-commit
+    - pre-push
+
+repos:
+    -   repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v6.0.0
+        hooks:
+            -   id: end-of-file-fixer
+                exclude: "(weave_query)"
+            -   id: trailing-whitespace
+                exclude: "(weave_query)"
+
+    -   repo: https://github.com/adrienverge/yamllint
+        rev: v1.37.1
+        hooks:
+            -   id: yamllint
+                exclude: "(^.*/templates/.*.yaml$)"
+
+
+    -   repo: https://github.com/koalaman/shellcheck-precommit
+        rev: v0.11.0
+        hooks:
+            -   id: shellcheck
+                exclude: "(weave_query)"
+
+    -   repo: https://github.com/rhysd/actionlint
+        rev: v1.7.9
+        hooks:
+            -   id: actionlint
+
+    -   repo: https://github.com/gitleaks/gitleaks
+        rev: v8.30.0
+        hooks:
+            -   id: gitleaks
+
+    # https://github.com/biomejs/pre-commit#using-biome-with-a-local-pre-commit-hook
+    -   repo: local
+        hooks:
+            -   id: local-biome-check
+                name: "bun lint:fix"
+                # the github actions workflow does `bun
+                # install --frozen-lockfile`, which primes the pump for bunx.
+                entry: "bunx biome check --verbose --write --files-ignore-unknown=true --no-errors-on-unmatched"
+                language: system
+                types: [text]
