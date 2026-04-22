@@ -19,7 +19,7 @@ env:
 
 jobs:
     diag:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-slim
 
         permissions:
         #     id-token: write
