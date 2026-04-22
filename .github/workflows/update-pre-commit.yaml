@@ -27,7 +27,7 @@ defaults:
 jobs:
     update-pre-commit:
         name: pre-commit autoupdate
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-slim
 
         permissions:
             contents: read

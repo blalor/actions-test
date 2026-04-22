@@ -11,7 +11,7 @@ run-name: Sync branches from ${{ github.ref_name }}
 jobs:
     sync-main:
         if: github.ref_name == 'main'
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-slim
 
         permissions:
             contents: write

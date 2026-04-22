@@ -38,7 +38,7 @@ jobs:
             contents: read
             actions: read # allow reading the run info
 
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-slim
 
         steps:
             -   run: echo ${{ github.workflow }}

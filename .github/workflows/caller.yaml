@@ -12,7 +12,7 @@ on:
 
 jobs:
     dummy:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-slim
         steps:
             -   run: echo ${{ github.workflow }}
 
@@ -36,7 +36,7 @@ jobs:
                     path: context.json
 
     # comment-on-pr:
-    #     runs-on: ubuntu-latest
+    #     runs-on: ubuntu-slim
 
     #     permissions:
     #         contents: read
