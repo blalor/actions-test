@@ -9,6 +9,8 @@ on:
 
     pull_request:
 
+    merge_group:
+        types: [checks_requested]
 
 env:
     # github.sha -- the commit SHA that triggered the workflow
@@ -71,18 +73,14 @@ jobs:
 
             -   name: dump contexts
                 shell: bash
-                run: |-
-                    set -e
+                env:
+                    CTX: |-
+                        github: ${{ toJSON(github) }}
+                        inputs: ${{ toJSON(inputs) }}
+                        vars: ${{ toJSON(vars) }}
+                        env: ${{ toJSON(env) }}
 
-                    cat <<-'__ctx' >| context-github.json
-                    {
-                        "github": ${{ toJSON(github) }},
-                        "inputs": ${{ toJSON(inputs) }},
-                        "vars": ${{ toJSON(vars) }},
-                        "env": ${{ toJSON(env) }}
-                    }
-                    __ctx
-
+                run: echo "${CTX}" >| contexts.yaml
 
             -   uses: namespacelabs/breakpoint-action@v0
                 if: "github.run_attempt > 1"
@@ -93,7 +91,7 @@ jobs:
                 uses: actions/upload-artifact@v4
                 with:
                     name: contexts-${{ github.job }}
-                    path: context-*.json
+                    path: contexts.yaml
 
             -   name: checkout
                 uses: actions/checkout@v4
